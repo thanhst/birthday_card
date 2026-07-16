@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Một món quà sinh nhật tương tác với hộp quà, chìa khóa, quyển thư và lời chúc ấm áp."
+    />
+    <meta property="og:title" content="Một món quà sinh nhật dành riêng cho bạn" />
+    <meta
+      property="og:description"
+      content="Mở hộp quà nhỏ này để nhận một lời chúc thật nồng ấm."
+    />
+    <meta name="theme-color" content="#f7b8c8" />
+    <title>Một Món Quà Sinh Nhật</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="sky" aria-hidden="true"></canvas>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <div class="ambient ambient-three" aria-hidden="true"></div>
+
+    <main class="experience" aria-live="polite">
+      <section class="stage stage-gift is-active" data-stage="gift">
+        <p class="eyebrow">Một bất ngờ nhỏ</p>
+        <h1 id="heroTitle">Có một món quà đang đợi bạn mở</h1>
+        <p class="lead" id="heroLead">
+          Chạm vào hộp quà. Mọi điều bên trong được gói bằng sự dịu dàng.
+        </p>
+
+        <button class="gift-button" id="openGift" type="button" aria-label="Mở hộp quà">
+          <span class="gift-box" aria-hidden="true">
+            <span class="gift-shadow"></span>
+            <span class="gift-lid">
+              <span class="gift-bow gift-bow-left"></span>
+              <span class="gift-bow gift-bow-right"></span>
+              <span class="gift-lid-ribbon"></span>
+            </span>
+            <span class="gift-base">
+              <span class="gift-ribbon-vertical"></span>
+              <span class="gift-ribbon-horizontal"></span>
+            </span>
+            <span class="gift-light"></span>
+          </span>
+          <span class="button-label">Mở quà</span>
+        </button>
+      </section>
+
+      <section class="stage stage-key" data-stage="key">
+        <p class="eyebrow">Bên trong hộp quà</p>
+        <h2>Một chiếc chìa khóa vàng</h2>
+        <p class="lead">
+          Chìa khóa này mở ra một quyển thư nhỏ, nơi lời chúc được cất thật cẩn thận.
+        </p>
+
+        <div class="key-scene" aria-hidden="true">
+          <span class="key-glow"></span>
+          <span class="golden-key">
+            <span class="key-ring"></span>
+            <span class="key-stem"></span>
+            <span class="key-tooth key-tooth-one"></span>
+            <span class="key-tooth key-tooth-two"></span>
+          </span>
+        </div>
+
+        <button class="primary-action" id="takeKey" type="button">
+          Dùng chìa khóa
+        </button>
+      </section>
+
+      <section class="stage stage-book" data-stage="book">
+        <p class="eyebrow">Hộp thư ký ức</p>
+        <h2>Mở quyển thư này nhé</h2>
+        <p class="lead">
+          Mỗi trang là một lời nhắn nhỏ. Trang cuối cùng dành cho điều quan trọng nhất.
+        </p>
+
+        <div class="storybook" id="storybook" aria-hidden="true">
+          <div class="book-back"></div>
+          <div class="book-pages">
+            <article class="paper paper-left">
+              <span class="paper-label">Dành cho</span>
+              <strong id="bookRecipient">bạn</strong>
+            </article>
+            <article class="paper paper-right">
+              <span class="paper-count" id="paperCount">01</span>
+              <p id="paperText">Một ngày đẹp bắt đầu bằng một lời chúc thật hiền.</p>
+            </article>
+          </div>
+          <div class="book-cover">
+            <span class="cover-border"></span>
+            <span class="cover-title">Birthday Letter</span>
+            <span class="cover-seal"></span>
+          </div>
+        </div>
+
+        <button class="primary-action" id="openBook" type="button">
+          Mở thư
+        </button>
+      </section>
+
+      <section class="stage stage-final" data-stage="final">
+        <div class="final-card">
+          <div class="floral-ring" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <p class="eyebrow">Lời chúc cuối cùng</p>
+          <h2 id="finalTitle">Chúc mừng sinh nhật</h2>
+          <div class="warm-message" id="warmMessage"></div>
+          <p class="signature" id="signature"></p>
+          <div class="final-actions">
+            <button class="primary-action" id="celebrateAgain" type="button">
+              Xem lại từ đầu
+            </button>
+            <button class="ghost-action" id="sparkAgain" type="button">
+              Thêm pháo hoa
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="progress-dots" aria-label="Tiến trình mở quà">
+      <span class="is-active" data-dot="gift"></span>
+      <span data-dot="key"></span>
+      <span data-dot="book"></span>
+      <span data-dot="final"></span>
+    </div>
+
+    <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
