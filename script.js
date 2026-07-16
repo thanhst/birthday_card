@@ -1,14 +1,8 @@
 const CONFIG = {
   recipientName: "người đặc biệt",
   senderName: "người luôn mong bạn hạnh phúc",
-  heroTitle: "Có một món quà đang đợi bạn mở",
-  heroLead: "Chạm vào hộp quà. Mọi điều bên trong được gói bằng sự dịu dàng.",
-  bookPages: [
-    "Có những ngày chỉ cần bạn mỉm cười, cả thế giới đã dịu lại một chút.",
-    "Mong tuổi mới của bạn luôn có đủ bình yên để nghỉ ngơi, đủ can đảm để bước tiếp, và đủ yêu thương để thấy mình được trân trọng.",
-    "Những điều tốt đẹp nhất không cần ồn ào. Chúng đến như ánh sáng buổi sáng, nhẹ nhàng nhưng làm lòng người ấm lên.",
-    "Hôm nay là ngày của bạn. Hãy nhận lấy tất cả sự quan tâm, những cái ôm, những lời chúc, và cả những điều may mắn đang tới."
-  ],
+  heroTitle: "Có một tấm thiệp đang nằm trong hộp quà",
+  heroLead: "Chạm vào hộp quà. Thiệp sẽ trượt ra ngay, mang theo một lời chúc thật ấm.",
   finalTitle: "Chúc mừng sinh nhật, người đặc biệt",
   finalMessage: [
     "Chúc bạn một tuổi mới thật ấm, thật sáng, và thật hiền với chính mình.",
@@ -24,24 +18,19 @@ const ctx = sky.getContext("2d");
 const confettiLayer = document.getElementById("confettiLayer");
 
 const openGiftButton = document.getElementById("openGift");
-const takeKeyButton = document.getElementById("takeKey");
-const openBookButton = document.getElementById("openBook");
 const celebrateAgainButton = document.getElementById("celebrateAgain");
 const sparkAgainButton = document.getElementById("sparkAgain");
-const storybook = document.getElementById("storybook");
-const paperText = document.getElementById("paperText");
-const paperCount = document.getElementById("paperCount");
 
 let audioContext;
 let particles = [];
 let fireworks = [];
 let shootingStars = [];
 let stageName = "gift";
+let transitionTimer;
 
 function hydrateCopy() {
   document.getElementById("heroTitle").textContent = CONFIG.heroTitle;
   document.getElementById("heroLead").textContent = CONFIG.heroLead;
-  document.getElementById("bookRecipient").textContent = CONFIG.recipientName;
   document.getElementById("finalTitle").textContent = CONFIG.finalTitle;
   document.getElementById("signature").textContent = `- Từ ${CONFIG.senderName}`;
 
@@ -103,7 +92,7 @@ function resizeSky() {
   sky.style.width = `${window.innerWidth}px`;
   sky.style.height = `${window.innerHeight}px`;
   ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-  particles = Array.from({ length: Math.min(90, Math.floor(window.innerWidth / 18)) }, () => ({
+  particles = Array.from({ length: Math.min(100, Math.floor(window.innerWidth / 16)) }, () => ({
     x: Math.random() * window.innerWidth,
     y: Math.random() * window.innerHeight,
     radius: Math.random() * 1.8 + 0.4,
@@ -114,9 +103,9 @@ function resizeSky() {
 
 function spawnFirework(x = Math.random() * window.innerWidth, y = Math.random() * window.innerHeight * 0.52) {
   const palette = ["#f4c95d", "#f5a6bb", "#96c7ef", "#9ad7c2", "#ffffff"];
-  for (let i = 0; i < 72; i += 1) {
-    const angle = (Math.PI * 2 * i) / 72;
-    const speed = Math.random() * 4.2 + 1.7;
+  for (let i = 0; i < 76; i += 1) {
+    const angle = (Math.PI * 2 * i) / 76;
+    const speed = Math.random() * 4.3 + 1.8;
     fireworks.push({
       x,
       y,
@@ -202,71 +191,33 @@ function burstConfetti(count = 90) {
   }
 }
 
-function cycleBookPages() {
-  let index = 0;
-  paperText.textContent = CONFIG.bookPages[index];
-  paperCount.textContent = "01";
-
-  const turn = () => {
-    index += 1;
-    if (index >= CONFIG.bookPages.length) {
-      window.setTimeout(() => {
-        showStage("final");
-        playChime("final");
-        burstConfetti(140);
-        spawnFirework(window.innerWidth * 0.25, window.innerHeight * 0.34);
-        spawnFirework(window.innerWidth * 0.72, window.innerHeight * 0.28);
-      }, 1200);
-      return;
-    }
-
-    storybook.classList.add("is-turning");
-    window.setTimeout(() => {
-      paperText.textContent = CONFIG.bookPages[index];
-      paperCount.textContent = String(index + 1).padStart(2, "0");
-    }, 310);
-    window.setTimeout(() => storybook.classList.remove("is-turning"), 860);
-    window.setTimeout(turn, 2700);
-  };
-
-  window.setTimeout(turn, 2300);
+function revealFinalCard() {
+  showStage("final");
+  playChime("final");
+  burstConfetti(150);
+  spawnFirework(window.innerWidth * 0.22, window.innerHeight * 0.32);
+  spawnFirework(window.innerWidth * 0.72, window.innerHeight * 0.25);
+  spawnFirework(window.innerWidth * 0.54, window.innerHeight * 0.42);
 }
 
 openGiftButton.addEventListener("click", () => {
+  if (openGiftButton.classList.contains("is-open")) return;
   openGiftButton.classList.add("is-open");
   playChime("open");
-  burstConfetti(70);
+  burstConfetti(95);
   spawnFirework(window.innerWidth * 0.5, window.innerHeight * 0.38);
-  window.setTimeout(() => showStage("key"), 1200);
-});
-
-takeKeyButton.addEventListener("click", () => {
-  playChime("open");
-  spawnShootingStar();
-  burstConfetti(45);
-  window.setTimeout(() => showStage("book"), 620);
-});
-
-openBookButton.addEventListener("click", () => {
-  openBookButton.disabled = true;
-  storybook.classList.add("is-open");
-  playChime("open");
-  burstConfetti(55);
-  window.setTimeout(cycleBookPages, 780);
+  transitionTimer = window.setTimeout(revealFinalCard, 1550);
 });
 
 celebrateAgainButton.addEventListener("click", () => {
-  storybook.classList.remove("is-open", "is-turning");
+  window.clearTimeout(transitionTimer);
   openGiftButton.classList.remove("is-open");
-  openBookButton.disabled = false;
-  paperText.textContent = CONFIG.bookPages[0];
-  paperCount.textContent = "01";
   showStage("gift");
 });
 
 sparkAgainButton.addEventListener("click", () => {
   playChime("final");
-  burstConfetti(90);
+  burstConfetti(95);
   spawnFirework(window.innerWidth * 0.28, window.innerHeight * 0.32);
   spawnFirework(window.innerWidth * 0.58, window.innerHeight * 0.24);
   spawnFirework(window.innerWidth * 0.78, window.innerHeight * 0.42);
