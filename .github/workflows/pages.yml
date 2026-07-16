@@ -1,4 +1,4 @@
-name: Deploy Birthday Card
+name: Publish Birthday Card
 
 on:
   push:
@@ -7,32 +7,33 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v6
+      - name: Publish static files to gh-pages
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      - name: Upload static files
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: .
+          export SITE_DIR="$(mktemp -d)"
+          cp index.html styles.css script.js README.md .nojekyll "$SITE_DIR"/
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git switch --orphan gh-pages
+          git rm -rf . >/dev/null 2>&1 || true
+          cp -a "$SITE_DIR"/. .
+          git add .
+          git commit -m "Publish birthday card to GitHub Pages"
+          git push origin gh-pages --force
